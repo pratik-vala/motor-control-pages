@@ -242,18 +242,9 @@
         function openApp() {
             // Try to open the app using deep link
             const deepLink = 'motorcontrol://login';
-            const playStoreLink = 'https://play.google.com/store/apps/details?id=com.motorcontrol.app';
             
-            // Attempt to open the app
+            // Attempt to open the app (silently)
             window.location.href = deepLink;
-            
-            // If app doesn't open in 2 seconds, show option to go to Play Store
-            setTimeout(function() {
-                const userChoice = confirm('App not installed?\n\nClick OK to download from Play Store, or Cancel to continue.');
-                if (userChoice) {
-                    window.location.href = playStoreLink;
-                }
-            }, 2000);
         }
     </script>
 </body>
