@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Control - Email Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: 48px 32px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: #2C2C2C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        h1 {
+            color: #1A1A1A;
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .message {
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .spinner {
+            border: 3px solid #F5F5F5;
+            border-top: 3px solid #2C2C2C;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin: 24px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: #2C2C2C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: #666666;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #2C2C2C;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.2s, box-shadow 0.2s;
+            margin-top: 24px;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: #1A1A1A;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            background: #3D3D3D;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loading" class="container">
+        <div class="logo">⚡</div>
+        <h1>Motor Control</h1>
+        <div class="spinner"></div>
+        <p class="message">Verifying your email...</p>
+    </div>
+
+    <!-- Success State -->
+    <div id="success" class="container hidden">
+        <div class="success-icon">✓</div>
+        <h1>Email Verified!</h1>
+        <p class="message">Your email has been successfully verified. You can now sign in to your Motor Control account.</p>
+        <a href="motorcontrol://login" class="btn">Open App</a>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="container hidden">
+        <div class="error-icon">✕</div>
+        <h1>Verification Failed</h1>
+        <p class="message" id="errorMessage">The verification link is invalid or has expired. Please request a new verification email.</p>
+        <a href="motorcontrol://login" class="btn">Back to App</a>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // TODO: Replace with your Firebase config
+        // Note: Only these fields are needed for email verification (all FREE)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Get the action to complete
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        const actionCode = urlParams.get('oobCode');
+
+        // Handle the action
+        if (mode === 'verifyEmail') {
+            handleVerifyEmail(actionCode);
+        } else if (mode === 'resetPassword') {
+            handleResetPassword(actionCode);
+        } else {
+            showError('Invalid action');
+        }
+
+        function handleVerifyEmail(actionCode) {
+            firebase.auth().applyActionCode(actionCode)
+                .then(() => {
+                    // Email verified successfully
+                    showSuccess();
+                })
+                .catch((error) => {
+                    // Error occurred
+                    let errorMsg = 'The verification link is invalid or has expired.';
+                    if (error.code === 'auth/expired-action-code') {
+                        errorMsg = 'This verification link has expired. Please request a new one.';
+                    } else if (error.code === 'auth/invalid-action-code') {
+                        errorMsg = 'This verification link is invalid or has already been used.';
+                    }
+                    showError(errorMsg);
+                });
+        }
+
+        function handleResetPassword(actionCode) {
+            // For password reset, redirect to a password reset form
+            // You can create a separate page for this
+            window.location.href = 'reset-password-form.html?oobCode=' + actionCode;
+        }
+
+        function showSuccess() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
