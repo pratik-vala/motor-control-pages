@@ -57,6 +57,9 @@
             font-size: 14px;
             line-height: 1.6;
             margin-bottom: 32px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .spinner {
@@ -84,20 +87,20 @@
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: white;
+            color: #FFFFFF;
         }
 
         .error-icon {
             width: 80px;
             height: 80px;
             margin: 0 auto 24px;
-            background: #666666;
+            background: #4A4A4A;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            color: white;
+            color: #FFFFFF;
         }
 
         .btn {
@@ -132,7 +135,13 @@
 <body>
     <!-- Loading State -->
     <div id="loading" class="container">
-        <div class="logo">⚡</div>
+        <div class="logo">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
         <h1>Motor Control</h1>
         <div class="spinner"></div>
         <p class="message">Verifying your email...</p>
@@ -140,7 +149,11 @@
 
     <!-- Success State -->
     <div id="success" class="container hidden">
-        <div class="success-icon">✓</div>
+        <div class="success-icon">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 6L9 17L4 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
         <h1>Email Verified!</h1>
         <p class="message">Your email has been successfully verified. You can now sign in to your Motor Control account.</p>
         <button onclick="openApp()" class="btn">Open App</button>
@@ -149,7 +162,11 @@
 
     <!-- Error State -->
     <div id="error" class="container hidden">
-        <div class="error-icon">✕</div>
+        <div class="error-icon">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
         <h1>Verification Failed</h1>
         <p class="message" id="errorMessage">The verification link is invalid or has expired. Please request a new verification email.</p>
         <button onclick="openApp()" class="btn">Retry</button>
